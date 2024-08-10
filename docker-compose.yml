@@ -1,0 +1,55 @@
+networks:
+  template_compose:
+    driver: bridge
+
+services:
+
+  web:
+    container_name: fullstack_template_compose
+    build:
+      .
+    depends_on:
+      - db
+      - nginx
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./application:/usr/src/app
+      - ./application/public:/usr/src/app/public
+    command: air ./cmd/main.go -b 0.0.0.0
+    networks:
+      template_compose:
+
+  db:
+    container_name: db_template_compose
+    image: postgres:alpine
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWD}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+    networks:
+      template_compose:
+
+  nginx:
+   container_name: nginx_template_compose
+   restart: always
+   image: nginx
+   volumes:
+    - ./nginx/templates:/etc/nginx/templates:ro
+    - ./nginx/ssl/sslbundle.crt:/etc/nginx/ssl/sslbundle.crt:ro
+    - ./nginx/ssl/sslbundle.key:/etc/nginx/ssl/sslbundle.key:ro
+   ports:
+    - 443:443
+   links:
+    - guacamole
+   networks:
+     template_compose:
+
+volumes:
+  postgres-db:

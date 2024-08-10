@@ -1,0 +1,24 @@
+server {
+
+    # SSL configuration
+
+    listen 443 ssl;
+    listen [::]:443;
+
+    ssl_certificate /etc/ssl/sslbundle.crt;
+    ssl_certificate_key /etc/ssl/sslbundle.key;
+
+    server_name www.domain.com _ ;
+    client_max_body_size 100M;
+
+    error_page 502 /custom_502.html;
+    location = /custom_502.html {
+        root /var/www/error;
+        internal;
+    }
+
+    location / {
+        include proxy_params;
+        proxy_pass http://localhost:3000;
+    }
+}
