@@ -1,7 +1,6 @@
 package main
 
 import (
-	"template/pkg/middleware"
 	"template/pkg/routes"
 	"template/pkg/utils"
 
@@ -12,7 +11,6 @@ import (
 func init() {
 	utils.ConnectToDatabase()
 	utils.SyncDB()
-	middleware.LoadEnvironment()
 }
 
 func main() {
